@@ -1,1 +1,39 @@
-# Write Kubernetes Deployment Script
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalogue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalogue
+  template:
+    metadata:
+      labels:
+        app: book-catalogue
+    spec:
+      containers:
+      - name: book-catalogue
+        image: book_catalog:latest   
+        imagePullPolicy: Never
+        env:
+        - name: PORT
+          value: "8000"           
+        - name: DATABASE_URL
+          value: "postgresql://manav02_user:6j2xuYRBHBjWYJQNG4d1UmOpxXd4JtiB@dpg-creonm3v2p9s73d19gq0-a.oregon-postgres.render.com/manav02"
+        ports:
+        - containerPort: 8000        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalogue
+spec:
+  selector:
+    app: book-catalogue
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8000                    
+      targetPort: 8000              
+      nodePort: 32725               
